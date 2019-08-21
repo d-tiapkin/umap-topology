@@ -1,0 +1,64 @@
+data_path: "samples/SO2.csv"
+samples: 100000
+persistence:
+    skip: False
+    dim: 2
+    alpha: 0.35
+    samples: 50000
+    landmarks: 2500
+    file: "filtration/SO2.dgm"
+dimension_reduction:
+    - umap:
+        neighbors: 2
+        dimension: 2
+
+        epochs: null
+        learning_rate: 1.0
+
+        min_dist: 0.05
+        spread: 0.205
+
+        random_state: 42
+        transform_seed: 42
+
+        local_connectivity: 1
+        repulsion_strength: 1.0
+        negative_sample_rate: 5
+
+        file: "samples/reduced/SO2_R2.csv"
+
+        persistence:
+            skip: False
+            dim: 2
+            alpha: 0.35
+            samples: 50000
+            landmarks: 2500
+            file: "filtration/reduced/SO2_R2.dgm"
+
+    - umap:
+        neighbors: 2
+        dimension: 2
+
+        epochs: null
+        learning_rate: 1.0
+
+        min_dist: 0.05
+        spread: 0.205
+
+        random_state: 42
+        transform_seed: 42
+
+        local_connectivity: 1
+        repulsion_strength: 1.0
+        negative_sample_rate: 5
+
+        file: "samples/reduced/SO2_R3.csv"
+
+        persistence:
+            skip: False
+            dim: 2
+            alpha: 0.35
+            samples: 50000
+            landmarks: 2500
+            file: "filtration/reduced/SO2_R3.dgm"
+
