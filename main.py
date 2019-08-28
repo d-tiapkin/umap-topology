@@ -3,59 +3,79 @@ import lib.filtration as filt
 
 import numpy as np
 import multiprocessing
+import multiprocessing_logging
 import umap
 
 import yaml
 import logging
+import sys
+import time
 
-#TODO: logging
+def calc_persistence(points, config):
+    if config is None or config['skip']:
+        return
+    logger = logging.getLogger("calc_persistence")
 
-DEFAULT_LEVEL = logging.DEBUG
-formatter = logging.Formatter("%(levelname)s: %(asctime)s - %(name)s - %(process)s - %(message)s")
+    logger.info("Start calculating persistence...")
+    filt.build_and_write_persistence(
+        points[:config['samples']],
+        config['landmarks'],
+        config['alpha'],
+        config['dim'],
+        config['file'])
 
-def asynch_persistence(points, config, pool, waiting_processes):
-    if not config.skip:
-        waiting_processes.append(
-            pool.apply_async(filt.build_and_write_persistence, (
-            points=         points,
-            numb_landmarks= config.landmarks,
-            alpha=          config.alpha,
-            dim=            config.dim,
-            file_name=      config.file)))
+
+def calc_reduction(points, config):
+    if config is None:
+        return
+    if config['umap'] is None:
+        return
+
+    print(config)
+    config = config['umap']
+
+    start_time = time.time()
+    logger = logging.getLogger("calc_reduction")
+    logger.info("Start calculating dimension reduction...")
+    reducer = umap.UMAP(
+        n_neighbors=            config['neighbors'],
+        n_components=           config['dimension'],
+        n_epochs=               config['epochs'],
+        learning_rate=          config['learning_rate'],
+        min_dist=               config['min_dist'],
+        spread=                 config['spread'],
+        random_state=           config['random_state'],
+        transform_seed=         config['transform_seed'],
+        local_connectivity=     config['local_connectivity'],
+        repulsion_strength=     config['repulsion_strength'],
+        negative_sample_rate=   config['negative_sample_rate']
+    )
+    low_dimensional = reducer.fit_transform(points)
+    logger.info("Reduced dimension in {} sec".format(time.time() - start_time))
+    np.savetxt(config['file'], low_dimensional)
+    calc_persistence(low_dimensional, config['persistence'])
 
 
 def main(config):
-    logging.BasicConfig(filename="experiment.log", level=logging.INFO)
+    logging.basicConfig(
+        filename='log.log',
+        #stream=sys.stdout,
+        format=u'%(levelname)s: %(asctime)s - %(name)s - %(process)s - %(message)s',
+        level=logging.DEBUG)
+    multiprocessing_logging.install_mp_handler()
+
     logger = logging.getLogger("main")
-    logger.info("Started...")
+    logger.info('Started...')
 
-    points = np.genfromtxt(config.data_path, max_rows=config.samples)
-    waiting_processes = []
+    points = np.genfromtxt(config['data_path'], max_rows=config['samples'])
+    logger.info('Get {} points. Start calculation...'.format(len(points)))
 
-    with multiprocessing.Pool(processes=config.nproc) as pool:
-        asynch_persistence(points, config.persistence, pool, waiting_processes)
-
-        # TODO: logging
-        for reduction in config.dimension_reduction:
-            reducer = umap.UMAP(
-                n_neighbors=            reduction.umap.neighbors,
-                n_components=           reduction.umap.dimension,
-                n_epochs=               reduction.umap.epochs,
-                learning_rate=          reduction.umap.learning_rate,
-                min_dist=               reduction.umap.min_dist,
-                spread=                 reduction.umap.spread,
-                random_state=           reduction.umap.random_state,
-                transform_seed=         reduction.umap.transform_seed,
-                local_connectivity=     reduction.umap.local_connectivity,
-                repulsion_strength=     reduction.umap.repulsion_strength,
-                negative_sample_rate=   reduction.umap.negative_sample_rate
-            )
-            low_dimensional = pool.apply_async(reducer.fit_transform, (points))
-            np.savetxt(reduction.umap.filename, low_dimensional.get())
-            asynch_persistence(low_dimensional.get(), reduction.umap.persistence, pool, waiting_processes)
-
-    for process in waiting_processes:
-        process.get()
+    pool = multiprocessing.Pool(processes=config['nproc'])
+    pool.apply_async(calc_persistence, [points, config['persistence']])
+    for reducing_config in config['dimension_reduction']:
+        pool.apply_async(calc_reduction, [points, reducing_config])
+    pool.close()
+    pool.join()
 
 
 if __name__ == "__main__":

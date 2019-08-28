@@ -1,11 +1,12 @@
 data_path: "samples/SO2.csv"
-samples: 100000
+samples: 10000
+nproc: 2
 persistence:
     skip: False
     dim: 2
-    alpha: 0.35
-    samples: 50000
-    landmarks: 2500
+    alpha: 0.2
+    samples: 10000
+    landmarks: 500
     file: "filtration/SO2.dgm"
 dimension_reduction:
     - umap:
@@ -16,7 +17,7 @@ dimension_reduction:
         learning_rate: 1.0
 
         min_dist: 0.05
-        spread: 0.205
+        spread: 0.25
 
         random_state: 42
         transform_seed: 42
@@ -30,20 +31,20 @@ dimension_reduction:
         persistence:
             skip: False
             dim: 2
-            alpha: 0.35
-            samples: 50000
-            landmarks: 2500
+            alpha: 2.5
+            samples: 10000
+            landmarks: 500
             file: "filtration/reduced/SO2_R2.dgm"
 
     - umap:
         neighbors: 2
-        dimension: 2
+        dimension: 3
 
         epochs: null
         learning_rate: 1.0
 
         min_dist: 0.05
-        spread: 0.205
+        spread: 0.25
 
         random_state: 42
         transform_seed: 42
@@ -57,8 +58,8 @@ dimension_reduction:
         persistence:
             skip: False
             dim: 2
-            alpha: 0.35
-            samples: 50000
-            landmarks: 2500
+            alpha: 2.5
+            samples: 10000
+            landmarks: 500
             file: "filtration/reduced/SO2_R3.dgm"
 

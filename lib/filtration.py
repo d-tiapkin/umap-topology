@@ -18,22 +18,21 @@ def witness_complex_persistence(points, numb_landmarks, alpha, dim):
         max_alpha_square=alpha**2,
         limit_dimension=dim)
 
-    logger.info("Process: {}. Build complex in {} sec".format(os.getpid(), time.time() - start_time))
-    logger.info("Process: {}. {} vertices, {} simplices".format(
-        os.getpid(),
+    logger.info("Build complex in {} sec".format(time.time() - start_time))
+    logger.info("{} vertices, {} simplices".format(
         simplex_tree.num_vertices(),
         simplex_tree.num_simplices()))
 
     start_time = time.time()
     simplex_tree.initialize_filtration()
     simplex_tree.persistence()
-    logger.info("Process: {}. Build persistence in {} sec".format(os.getpid(), time.time() - start_time))
+    logger.info("Build persistence in {} sec".format(time.time() - start_time))
 
     return simplex_tree
 
 
 def write_persistence(simplex_tree, file_name):
-    simplex_tree.write_persistence(file_name)
+    simplex_tree.write_persistence_diagram(file_name)
 
 
 def build_and_write_persistence(points, numb_landmarks, alpha, dim, file_name):

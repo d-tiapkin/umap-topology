@@ -15,7 +15,7 @@ def main(file_samples, file_diagram, numb_samples, numb_landmarks, alpha, dim):
         file_samples,
         numb_landmarks))
     logger.info("Paramters: alpha={}, dim={}".format(alpha, dim))
-    build_and_write_persistence(points, numb_landmarks, alpha, dim, file_diagram)
+    filt.build_and_write_persistence(points, numb_landmarks, alpha, dim, file_diagram)
 
 
 if __name__ == "__main__":
