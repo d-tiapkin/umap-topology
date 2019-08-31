@@ -1,15 +1,41 @@
-data_path: "samples/SO3.csv"
+data_path: "samples/SO2.csv"
 samples: 10000
-nproc: 4
+nproc: 2
 persistence:
     skip: False
-    dim: 4
-    alpha: 2
-    samples: 2500
-    field: 3
-    landmarks: 125
-    file: "filtration/SO3_Z3.dgm"
+    dim: 2
+    alpha: 0.2
+    samples: 10000
+    landmarks: 500
+    file: "filtration/SO2.dgm"
 dimension_reduction:
+    - umap:
+        neighbors: 2
+        dimension: 2
+
+        epochs: null
+        learning_rate: 1.0
+
+        min_dist: 0.05
+        spread: 0.25
+
+        random_state: 42
+        transform_seed: 42
+
+        local_connectivity: 1
+        repulsion_strength: 1.0
+        negative_sample_rate: 5
+
+        file: "samples/reduced/SO2_R2.csv"
+
+        persistence:
+            skip: False
+            dim: 2
+            alpha: 2.5
+            samples: 10000
+            landmarks: 500
+            file: "filtration/reduced/SO2_R2.dgm"
+
     - umap:
         neighbors: 2
         dimension: 3
@@ -27,42 +53,13 @@ dimension_reduction:
         repulsion_strength: 1.0
         negative_sample_rate: 5
 
-        file: "samples/reduced/SO3_R3.csv"
+        file: "samples/reduced/SO2_R3.csv"
 
         persistence:
-            skip: True
-            dim: 4
+            skip: False
+            dim: 2
             alpha: 2.5
             samples: 10000
-            field: 11
             landmarks: 500
-            file: "filtration/reduced/SO3_R3.dgm"
-
-    - umap:
-        neighbors: 2
-        dimension: 4
-
-        epochs: null
-        learning_rate: 1.0
-
-        min_dist: 0.05
-        spread: 0.25
-
-        random_state: 42
-        transform_seed: 42
-
-        local_connectivity: 1
-        repulsion_strength: 1.0
-        negative_sample_rate: 5
-
-        file: "samples/reduced/SO3_R4.csv"
-
-        persistence:
-            skip: True
-            dim: 4
-            alpha: 2.5
-            samples: 10000
-            field: 11
-            landmarks: 500
-            file: "filtration/reduced/SO3_R4.dgm"
+            file: "filtration/reduced/SO2_R3.dgm"
 

@@ -6,7 +6,7 @@ import os
 
 logger = logging.getLogger(name="filtration")
 
-def witness_complex_persistence(points, numb_landmarks, alpha, dim):
+def witness_complex_persistence(points, numb_landmarks, alpha, dim, field):
     start_time = time.time()
     landmarks = g.pick_n_random_points(
         points=points,
@@ -25,7 +25,7 @@ def witness_complex_persistence(points, numb_landmarks, alpha, dim):
 
     start_time = time.time()
     simplex_tree.initialize_filtration()
-    simplex_tree.persistence()
+    simplex_tree.persistence(homology_coeff_field=field)
     logger.info("Build persistence in {} sec".format(time.time() - start_time))
 
     return simplex_tree
@@ -35,5 +35,5 @@ def write_persistence(simplex_tree, file_name):
     simplex_tree.write_persistence_diagram(file_name)
 
 
-def build_and_write_persistence(points, numb_landmarks, alpha, dim, file_name):
-    write_persistence(witness_complex_persistence(points, numb_landmarks, alpha, dim), file_name)
+def build_and_write_persistence(points, numb_landmarks, alpha, dim, field, file_name):
+    write_persistence(witness_complex_persistence(points, numb_landmarks, alpha, dim, field), file_name)

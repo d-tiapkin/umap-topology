@@ -22,6 +22,7 @@ def calc_persistence(points, config):
         config['landmarks'],
         config['alpha'],
         config['dim'],
+        config['field'],
         config['file'])
 
 
