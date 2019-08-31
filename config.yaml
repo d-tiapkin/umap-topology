@@ -5,9 +5,9 @@ persistence:
     skip: False
     dim: 4
     alpha: 2
-    samples: 2500
+    samples: 5000
     field: 3
-    landmarks: 125
+    landmarks: 250
     file: "filtration/SO3_Z3.dgm"
 dimension_reduction:
     - umap:
